@@ -3,7 +3,9 @@ style:
     # TODOs are intentional and tracked in code — do not flag them as violations
     active: false
   MagicNumber:
-    # Magic numbers are acceptable in GPU code (e.g. shader work group sizes)
+    active: false
+  ThrowsCount:
+    # Validation functions legitimately throw for each distinct invalid input — disabling the cap
     active: false
 complexity:
   CyclomaticComplexMethod:

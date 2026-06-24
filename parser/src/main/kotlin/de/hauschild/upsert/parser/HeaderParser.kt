@@ -61,7 +61,10 @@ class HeaderParser {
         val hasFkParens = refStart != -1 || refEnd != -1
         return if (hasFkParens) {
             if (refStart == -1 || refEnd == -1 || refEnd <= refStart) {
-                throw InvalidHeaderException(listOf(token), "malformed foreign key reference: parentheses are unbalanced or out of order")
+                throw InvalidHeaderException(
+                    listOf(token),
+                    "malformed foreign key reference: parentheses are unbalanced or out of order",
+                )
             }
             val name = token.substring(0, refStart).trim()
             if (name.isEmpty()) { throw InvalidHeaderException(listOf(token), "column name must not be empty") }
@@ -92,10 +95,13 @@ class HeaderParser {
         val value = if (parts.size > 1) { parts[1].trim() } else { null }
         return when (key) {
             "unique" -> Modifier.Unique
-            "default" -> Modifier.Default(value ?: throw InvalidHeaderException(listOf(token), "default modifier requires a value"))
-            "dateformat" -> Modifier.DateFormat(value ?: throw InvalidHeaderException(listOf(token), "dateformat modifier requires a value"))
-            "translator" -> Modifier.Translator(value ?: throw InvalidHeaderException(listOf(token), "translator modifier requires a value"))
+            "default" -> Modifier.Default(requireValue(token, key, value))
+            "dateformat" -> Modifier.DateFormat(requireValue(token, key, value))
+            "translator" -> Modifier.Translator(requireValue(token, key, value))
             else -> throw UnknownModifierException(key)
         }
     }
+
+    private fun requireValue(token: String, key: String, value: String?): String =
+        value ?: throw InvalidHeaderException(listOf(token), "$key modifier requires a value")
 }
