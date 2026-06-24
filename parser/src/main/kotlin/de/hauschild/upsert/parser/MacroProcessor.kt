@@ -1,5 +1,8 @@
 package de.hauschild.upsert.parser
 
+import de.hauschild.upsert.parser.exception.InvalidMacroDefinitionException
+import de.hauschild.upsert.parser.exception.UnresolvableMacroException
+
 /**
  * Collects macro definitions from raw input lines and resolves macro references in strings.
  *
@@ -33,10 +36,11 @@ class MacroProcessor {
     fun collect(line: String) {
 
         val trimmed = line.trim()
-        if (!trimmed.startsWith("$")) return
+        if (!trimmed.startsWith("$")) { return }
         val equalsIndex = trimmed.indexOf('=')
-        if (equalsIndex == -1) return
+        if (equalsIndex == -1) { return }
         val name = trimmed.substring(1, equalsIndex).trim()
+        if (name.isEmpty()) { throw InvalidMacroDefinitionException(name) }
         val value = trimmed.substring(equalsIndex + 1).trim()
         macros[name] = resolve(value)
     }
@@ -56,6 +60,8 @@ class MacroProcessor {
         macros.entries
             .sortedByDescending { it.key.length }
             .forEach { (name, value) -> result = result.replace("\$$name", value) }
+        val unresolved = Regex("\\$([a-zA-Z_]\\w*)").find(result)
+        if (unresolved != null) { throw UnresolvableMacroException(unresolved.groupValues[1]) }
         return result
     }
 }

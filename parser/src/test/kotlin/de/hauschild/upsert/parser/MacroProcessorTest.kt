@@ -1,7 +1,10 @@
 package de.hauschild.upsert.parser
 
+import de.hauschild.upsert.parser.exception.InvalidMacroDefinitionException
+import de.hauschild.upsert.parser.exception.UnresolvableMacroException
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class MacroProcessorTest {
@@ -71,8 +74,8 @@ class MacroProcessorTest {
     }
 
     @Test
-    fun `resolve leaves unknown references unchanged`() {
-        assertEquals("order \$unknown reference", processor.resolve("order \$unknown reference"))
+    fun `resolve throws for unresolvable macro reference`() {
+        assertFailsWith<UnresolvableMacroException> { processor.resolve("\$unknown") }
     }
 
     @Test
@@ -104,5 +107,10 @@ class MacroProcessorTest {
     fun `resolve returns input unchanged when no macros collected`() {
         val input = "INSERT_UPDATE person ; name ; age"
         assertEquals(input, processor.resolve(input))
+    }
+
+    @Test
+    fun `fails on macro definition with empty name`() {
+        assertFailsWith<InvalidMacroDefinitionException> { processor.collect("\$=value") }
     }
 }
