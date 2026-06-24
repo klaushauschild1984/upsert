@@ -1,0 +1,62 @@
+- name: DIKTAT_COMMON
+  enabled: true
+  configuration:
+    domainName: de.hauschild.upsert
+    kotlinVersion: 2.1
+    srcDirectories: "main,test,testFixtures"
+
+# Float arithmetic is intentional and correct in GPU compute code
+- name: FLOAT_IN_ACCURATE_CALCULATIONS
+  enabled: false
+
+# OpenGL convention: "GL" as acronym in file, class, object and variable names is standard
+- name: FILE_NAME_INCORRECT
+  enabled: false
+- name: CLASS_NAME_INCORRECT
+  enabled: false
+- name: OBJECT_NAME_INCORRECT
+  enabled: false
+- name: FUNCTION_NAME_INCORRECT_CASE
+  enabled: false
+- name: VARIABLE_NAME_INCORRECT_FORMAT
+  enabled: false
+
+# Mathematical convention: single letters (a, b) are common for matrix variables
+- name: IDENTIFIER_LENGTH
+  enabled: false
+
+# Type aliases add no value for simple one-off generic types
+- name: TYPE_ALIAS
+  enabled: false
+
+# Kotlin type inference is sufficient — explicit generic types are redundant
+- name: GENERIC_VARIABLE_WRONG_DECLARATION
+  enabled: false
+
+# Backtick names are idiomatic Kotlin for all test functions, not only @Test
+- name: BACKTICKS_PROHIBITED
+  enabled: false
+
+# Parameterized test factories naturally exceed 30 lines — splitting hurts readability
+- name: TOO_LONG_FUNCTION
+  enabled: false
+
+# data class is inappropriate for mutable state (mutableListOf, var fields)
+- name: USE_DATA_CLASS
+  enabled: false
+
+# Whitespace around colon is enforced by the formatter — not a real issue
+- name: WRONG_WHITESPACE
+  enabled: false
+
+# try/finally requires early declaration — false positive in resource management patterns
+- name: LOCAL_VARIABLE_EARLY_DECLARATION
+  enabled: false
+
+# Compiler exhaustiveness check covers sealed types — else branch would be dead code
+- name: WHEN_WITHOUT_ELSE
+  enabled: false
+
+# Magic numbers are acceptable in GPU code (e.g. shader work group sizes)
+- name: MAGIC_NUMBER
+  enabled: false

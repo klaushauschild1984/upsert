@@ -1,0 +1,18 @@
+[versions]
+detekt             = "1.23.7"
+diktat             = "2.0.0"
+kotlin             = "2.1.0"
+kotlin-logging     = "7.0.3"
+logback            = "1.5.18"
+kotlinx-coroutines = "1.10.2"
+
+[libraries]
+kotlin-logging          = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+logback                 = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+kotlinx-coroutines      = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+
+[plugins]
+detekt     = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+diktat     = { id = "com.saveourtool.diktat", version.ref = "diktat" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
