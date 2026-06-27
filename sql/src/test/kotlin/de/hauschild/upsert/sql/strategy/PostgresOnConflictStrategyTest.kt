@@ -64,7 +64,8 @@ class PostgresOnConflictStrategyTest {
             Operation.INSERT_UPDATE,
         )
         assertEquals(
-            "INSERT INTO person (email, name, age) VALUES (?, ?, ?) ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name, age = EXCLUDED.age",
+            "INSERT INTO person (email, name, age) VALUES (?, ?, ?) ON CONFLICT (email) " +
+                "DO UPDATE SET name = EXCLUDED.name, age = EXCLUDED.age",
             sql,
         )
     }
@@ -77,7 +78,8 @@ class PostgresOnConflictStrategyTest {
             Operation.INSERT_UPDATE,
         )
         assertEquals(
-            "INSERT INTO order_item (order_code, product_code, quantity) VALUES (?, ?, ?) ON CONFLICT (order_code, product_code) DO UPDATE SET quantity = EXCLUDED.quantity",
+            "INSERT INTO order_item (order_code, product_code, quantity) VALUES (?, ?, ?) " +
+                "ON CONFLICT (order_code, product_code) DO UPDATE SET quantity = EXCLUDED.quantity",
             sql,
         )
     }

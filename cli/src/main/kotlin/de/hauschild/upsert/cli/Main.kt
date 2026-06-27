@@ -48,7 +48,11 @@ class RunCommand : CliktCommand(
         envvar = "UPSERT_PASSWORD",
         help = "Database password (prefer UPSERT_PASSWORD env variable over flag)",
     ).required()
-    private val schema by option("--schema", envvar = "UPSERT_SCHEMA", help = "Default schema for unqualified table names")
+    private val schema by option(
+        "--schema",
+        envvar = "UPSERT_SCHEMA",
+        help = "Default schema for unqualified table names",
+    )
     private val strategy by option("--strategy", help = "copy (default) or tolerant (row-level error tolerance)")
         .choice("copy", "tolerant")
         .default("copy")

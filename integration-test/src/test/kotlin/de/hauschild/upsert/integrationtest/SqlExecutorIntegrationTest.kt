@@ -164,7 +164,10 @@ abstract class SqlExecutorIntegrationTest {
     @Test
     fun `resolves foreign key to primary key`() {
         execute("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, email TEXT UNIQUE NOT NULL)")
-        execute("CREATE TABLE IF NOT EXISTS order_item (id SERIAL PRIMARY KEY, customer_id INT REFERENCES customer(id), quantity INT)")
+        execute(
+            "CREATE TABLE IF NOT EXISTS order_item " +
+                "(id SERIAL PRIMARY KEY, customer_id INT REFERENCES customer(id), quantity INT)",
+        )
         execute("TRUNCATE order_item")
         execute("TRUNCATE customer CASCADE")
         execute("INSERT INTO customer (email) VALUES ('ada@example.com')")
@@ -187,7 +190,10 @@ abstract class SqlExecutorIntegrationTest {
     @Test
     fun `skips row when foreign key cannot be resolved`() {
         execute("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, email TEXT UNIQUE NOT NULL)")
-        execute("CREATE TABLE IF NOT EXISTS order_item (id SERIAL PRIMARY KEY, customer_id INT REFERENCES customer(id), quantity INT)")
+        execute(
+            "CREATE TABLE IF NOT EXISTS order_item " +
+                "(id SERIAL PRIMARY KEY, customer_id INT REFERENCES customer(id), quantity INT)",
+        )
         execute("TRUNCATE order_item")
         execute("TRUNCATE customer CASCADE")
 

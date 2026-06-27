@@ -10,11 +10,6 @@ class PostgresCopyStrategyTest {
 
     private val strategy = PostgresCopyStrategy()
 
-    private fun field(name: String, vararg modifiers: Modifier) =
-        Column.Field(name, modifiers.toList())
-
-    private fun unique(name: String) = field(name, Modifier.Unique)
-
     @Test
     fun `buildCreateStagingSql selects columns from target`() {
         val sql = strategy.buildCreateStagingSql(
@@ -127,7 +122,8 @@ class PostgresCopyStrategyTest {
             whereCols = listOf("order_code", "product_code"),
         )
         assertEquals(
-            "DELETE FROM order_item USING upsert_staging s WHERE order_item.order_code = s.order_code AND order_item.product_code = s.product_code",
+            "DELETE FROM order_item USING upsert_staging s " +
+                "WHERE order_item.order_code = s.order_code AND order_item.product_code = s.product_code",
             sql,
         )
     }

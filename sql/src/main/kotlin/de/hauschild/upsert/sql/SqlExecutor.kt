@@ -70,18 +70,10 @@ class SqlExecutor(private val config: ExecutionConfig) {
                 }
                 val resolver = ForeignKeyResolver(connection, config.defaultSchema, config.observationRegistry)
                 primeResolver(resolver, instruction.header.columns, rows)
-                val preSkipped = mutableListOf<SkippedRow>()
-                val resolvedRows = mutableListOf<ResolvedRow>()
-                for (dataRow in rows) {
-                    try {
-                        resolvedRows.add(resolveRow(dataRow, instruction.header.columns, metadata, resolver))
-                    } catch (exception: Exception) {
-                        preSkipped.add(
-                            SkippedRow(dataRow.lineNumber, dataRow.values, exception.message ?: "row resolution failed", exception),
-                        )
-                    }
-                }
-                val result = config.strategy.execute(connection, table, instruction.header, resolvedRows, config.observationRegistry)
+                val (resolvedRows, preSkipped) = resolveRows(rows, instruction.header.columns, metadata, resolver)
+                val result = config.strategy.execute(
+                    connection, table, instruction.header, resolvedRows, config.observationRegistry,
+                )
                 connection.commit()
                 return result.copy(skippedRows = preSkipped + result.skippedRows)
             } catch (exception: Exception) {
@@ -89,6 +81,31 @@ class SqlExecutor(private val config: ExecutionConfig) {
                 return InstructionResult(header = instruction.header, cause = exception)
             }
         }
+    }
+
+    private fun resolveRows(
+        rows: List<DataRow>,
+        columns: List<Column>,
+        metadata: TableMetadata,
+        resolver: ForeignKeyResolver,
+    ): Pair<List<ResolvedRow>, List<SkippedRow>> {
+        val resolved = mutableListOf<ResolvedRow>()
+        val skipped = mutableListOf<SkippedRow>()
+        for (dataRow in rows) {
+            try {
+                resolved.add(resolveRow(dataRow, columns, metadata, resolver))
+            } catch (exception: Exception) {
+                skipped.add(
+                    SkippedRow(
+                        dataRow.lineNumber,
+                        dataRow.values,
+                        exception.message ?: "row resolution failed",
+                        exception,
+                    ),
+                )
+            }
+        }
+        return resolved to skipped
     }
 
     private fun primeResolver(resolver: ForeignKeyResolver, columns: List<Column>, rows: List<DataRow>) {

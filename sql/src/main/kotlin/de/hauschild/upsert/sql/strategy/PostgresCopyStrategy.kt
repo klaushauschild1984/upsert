@@ -83,7 +83,9 @@ class PostgresCopyStrategy : UpsertStrategy {
             }
             Operation.INSERT_UPDATE -> {
                 val (inserted, updated) = connection.createStatement().use { stmt ->
-                    stmt.executeQuery(buildUpsertFromStagingSql(table, colNames, uniqueNames, nonUniqueNames)).use { rs ->
+                    stmt.executeQuery(
+                        buildUpsertFromStagingSql(table, colNames, uniqueNames, nonUniqueNames),
+                    ).use { rs ->
                         rs.next()
                         rs.getInt("inserted") to rs.getInt("updated")
                     }

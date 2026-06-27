@@ -38,28 +38,42 @@ class PostgresOnConflictStrategy : UpsertStrategy {
             return InstructionResult(header = header)
         }
         val sql = buildSql(table, header.columns, header.operation)
+        connection.prepareStatement(sql).use { stmt ->
+            return executeRows(stmt, rows, header)
+        }
+    }
+
+    private fun executeRows(stmt: PreparedStatement, rows: List<ResolvedRow>, header: Header): InstructionResult {
         var rowsInserted = 0
         var rowsUpdated = 0
         var rowsDeleted = 0
         val skippedRows = mutableListOf<SkippedRow>()
-        connection.prepareStatement(sql).use { stmt ->
-            for (row in rows) {
-                try {
-                    bindRow(stmt, row, header.columns, header.operation)
-                    val affected = stmt.executeUpdate()
-                    when (header.operation) {
-                        Operation.INSERT -> if (affected > 0) { rowsInserted++ }
-                        Operation.UPDATE -> if (affected > 0) { rowsUpdated++ } else {
-                            skippedRows.add(SkippedRow(row.lineNumber, rawValues(row), "no row matched the unique key for UPDATE"))
-                        }
-                        Operation.INSERT_UPDATE -> if (affected > 0) { rowsInserted++ }
-                        Operation.DELETE -> if (affected > 0) { rowsDeleted++ } else {
-                            skippedRows.add(SkippedRow(row.lineNumber, rawValues(row), "no row matched the unique key for DELETE"))
-                        }
+        for (row in rows) {
+            try {
+                bindRow(stmt, row, header.columns, header.operation)
+                val affected = stmt.executeUpdate()
+                when (header.operation) {
+                    Operation.INSERT -> if (affected > 0) { rowsInserted++ }
+                    Operation.UPDATE -> if (affected > 0) {
+                        rowsUpdated++
+                    } else {
+                        skippedRows.add(
+                            SkippedRow(row.lineNumber, rawValues(row), "no row matched the unique key for UPDATE"),
+                        )
                     }
-                } catch (exception: Exception) {
-                    skippedRows.add(SkippedRow(row.lineNumber, rawValues(row), exception.message ?: "SQL execution failed", exception))
+                    Operation.INSERT_UPDATE -> if (affected > 0) { rowsInserted++ }
+                    Operation.DELETE -> if (affected > 0) {
+                        rowsDeleted++
+                    } else {
+                        skippedRows.add(
+                            SkippedRow(row.lineNumber, rawValues(row), "no row matched the unique key for DELETE"),
+                        )
+                    }
                 }
+            } catch (exception: Exception) {
+                skippedRows.add(
+                    SkippedRow(row.lineNumber, rawValues(row), exception.message ?: "SQL execution failed", exception),
+                )
             }
         }
         return InstructionResult(
