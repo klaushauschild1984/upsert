@@ -4,6 +4,7 @@ include(
     "model",
     "parser",
     "parser:csv",
-//    "sql",
-//    "cli",
+    "sql",
+    "integration-test",
+    "cli",
 )

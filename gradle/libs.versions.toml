@@ -1,6 +1,11 @@
 [versions]
 ben-manes-versions = "0.54.0"
 detekt             = "1.23.7"
+micrometer         = "1.14.0"
+clikt              = "4.4.0"
+shadow             = "8.3.6"
+postgresql         = "42.7.7"
+testcontainers     = "1.21.4"
 diktat             = "2.0.0"
 kotlin             = "2.1.0"
 kotlin-csv         = "1.10.0"
@@ -9,7 +14,13 @@ logback            = "1.5.18"
 kotlinx-coroutines = "1.10.2"
 
 [libraries]
-kotlin-csv              = { module = "com.github.doyaaaaaken:kotlin-csv-jvm", version.ref = "kotlin-csv" }
+clikt                         = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+kotlin-csv                    = { module = "com.github.doyaaaaaken:kotlin-csv-jvm", version.ref = "kotlin-csv" }
+micrometer-observation        = { module = "io.micrometer:micrometer-observation", version.ref = "micrometer" }
+postgresql                    = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+testcontainers                = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-junit-jupiter  = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-postgresql     = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 kotlin-logging          = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 logback                 = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 kotlinx-coroutines      = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -20,3 +31,4 @@ ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "ben-
 detekt             = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 diktat             = { id = "com.saveourtool.diktat", version.ref = "diktat" }
 kotlin-jvm         = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+shadow             = { id = "com.gradleup.shadow", version.ref = "shadow" }
